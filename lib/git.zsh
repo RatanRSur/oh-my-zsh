@@ -61,13 +61,12 @@ function git_remote_status() {
 # it's not a symbolic ref, but in a Git repo.
 function git_current_branch() {
   local ref
-  ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null)
-  local ret=$?
-  if [[ $ret != 0 ]]; then
-    [[ $ret == 128 ]] && return  # no git repo.
+  ref=$(command git branch --show-current 2> /dev/null)
+  [[ $? != 0 ]] && return # no git repo
+  if [[ -z "$ref" ]]; then
     ref=$(command git rev-parse --short HEAD 2> /dev/null) || return
   fi
-  echo ${ref#refs/heads/}
+  echo $ref
 }
 
 
